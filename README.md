@@ -192,6 +192,7 @@ Modify `ui.js` to handle real API states:
 - Loading states during API calls
 - Error handling and retry logic
 - Connection status indicators
+- Copy-to-clipboard button feature added
 
 ## Browser Compatibility
 
