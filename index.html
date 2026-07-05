@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern AI assistant interface with conversation management">
+    <title>Claude-like Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" role="navigation" aria-label="Conversation list">
+            <div class="sidebar-header">
+                <button 
+                    id="new-conversation-btn" 
+                    class="btn-new-conversation"
+                    aria-label="Create new conversation"
+                    title="New conversation (Ctrl+N)"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>New Conversation</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-search">
+                <input 
+                    type="search" 
+                    id="conversation-search" 
+                    placeholder="Search conversations..."
+                    aria-label="Search conversations"
+                >
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            
+            <nav class="conversation-list" role="list" aria-label="Conversations">
+                <div id="conversation-list-container" class="conversation-list-container">
+                    <!-- Conversations will be rendered here -->
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Main Chat Area -->
+        <main class="main-content" role="main">
+            <!-- Header -->
+            <header class="chat-header">
+                <button 
+                    id="mobile-menu-toggle" 
+                    class="mobile-menu-toggle"
+                    aria-label="Toggle conversation list"
+                    aria-expanded="false"
+                >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                
+                <div class="assistant-info">
+                    <h1 id="assistant-name" class="assistant-name">Claude</h1>
+                    <div class="status-indicator">
+                        <span class="status-dot" aria-hidden="true"></span>
+                        <span id="assistant-status" class="status-text">Online</span>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="persona-selector">
+                        <button 
+                            id="persona-btn" 
+                            class="persona-btn"
+                            aria-label="Select persona"
+                            aria-haspopup="true"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span id="current-persona">Helpful</span>
+                        </button>
+                        <div id="persona-dropdown" class="persona-dropdown" role="menu" aria-hidden="true">
+                            <button class="persona-option" data-persona="helpful" role="menuitem">Helpful</button>
+                            <button class="persona-option" data-persona="creative" role="menuitem">Creative</button>
+                            <button class="persona-option" data-persona="technical" role="menuitem">Technical</button>
+                            <button class="persona-option" data-persona="concise" role="menuitem">Concise</button>
+                        </div>
+                    </div>
+                    
+                    <button 
+                        id="theme-toggle" 
+                        class="icon-btn"
+                        aria-label="Toggle theme"
+                        title="Toggle light/dark theme"
+                    >
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button 
+                        id="settings-btn" 
+                        class="icon-btn"
+                        aria-label="Open settings"
+                        title="Settings"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Messages Area -->
+            <div class="messages-container" role="log" aria-live="polite" aria-label="Chat messages">
+                <div id="messages-list" class="messages-list">
+                    <!-- Messages will be rendered here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <h2>Start a new conversation</h2>
+                    <p>Select a conversation from the sidebar or create a new one to get started.</p>
+                </div>
+            </div>
+            
+            <!-- Typing Indicator -->
+            <div id="typing-indicator" class="typing-indicator" aria-hidden="true" style="display: none;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <!-- Compose Area -->
+            <div class="compose-area">
+                <div class="compose-container">
+                    <button 
+                        id="attach-btn" 
+                        class="attach-btn"
+                        aria-label="Attach file"
+                        title="Attach file"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                        </svg>
+                    </button>
+                    
+                    <textarea 
+                        id="message-input" 
+                        class="message-input"
+                        placeholder="Message Claude..."
+                        rows="1"
+                        aria-label="Type your message"
+                    ></textarea>
+                    
+                    <button 
+                        id="send-btn" 
+                        class="send-btn"
+                        aria-label="Send message"
+                        title="Send message (Enter)"
+                        disabled
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                    
+                    <button 
+                        id="options-btn" 
+                        class="options-btn"
+                        aria-label="More options"
+                        aria-haspopup="true"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="compose-footer">
+                    <span class="compose-hint">Press Enter to send, Shift+Enter for new line</span>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" style="display: none;">
+        <div class="modal-backdrop" aria-hidden="true"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="settings-title">Settings</h2>
+                <button class="modal-close" aria-label="Close settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="latency-slider">
+                        <span>Response Latency</span>
+                        <span id="latency-value" class="setting-value">500ms</span>
+                    </label>
+                    <input 
+                        type="range" 
+                        id="latency-slider" 
+                        min="100" 
+                        max="2000" 
+                        step="100" 
+                        value="500"
+                        aria-describedby="latency-description"
+                    >
+                    <p id="latency-description" class="setting-description">Simulated delay before assistant response</p>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="stream-speed-slider">
+                        <span>Streaming Speed</span>
+                        <span id="stream-speed-value" class="setting-value">30ms</span>
+                    </label>
+                    <input 
+                        type="range" 
+                        id="stream-speed-slider" 
+                        min="10" 
+                        max="100" 
+                        step="5" 
+                        value="30"
+                        aria-describedby="stream-speed-description"
+                    >
+                    <p id="stream-speed-description" class="setting-description">Speed of text streaming effect</p>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <span>Theme</span>
+                    </label>
+                    <div class="theme-options">
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="light">
+                            <span>Light</span>
+                        </label>
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="dark">
+                            <span>Dark</span>
+                        </label>
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="system">
+                            <span>System</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="setting-group danger-zone">
+                    <button id="clear-data-btn" class="btn-danger">
+                        Clear All Data
+                    </button>
+                    <p class="setting-description">This will delete all conversations and reset settings</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <button class="btn-primary modal-save">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rename Conversation Modal -->
+    <div id="rename-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="rename-title" style="display: none;">
+        <div class="modal-backdrop" aria-hidden="true"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 id="rename-title">Rename Conversation</h2>
+                <button class="modal-close" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="rename-input">Conversation Name</label>
+                    <input 
+                        type="text" 
+                        id="rename-input" 
+                        class="form-input"
+                        placeholder="Enter conversation name"
+                        maxlength="50"
+                    >
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <button class="btn-primary modal-save">Rename</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Message Modal -->
+    <div id="edit-message-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="edit-message-title" style="display: none;">
+        <div class="modal-backdrop" aria-hidden="true"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="edit-message-title">Edit Message</h2>
+                <button class="modal-close" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="edit-message-input">Message Content</label>
+                    <textarea 
+                        id="edit-message-input" 
+                        class="form-input form-textarea"
+                        rows="6"
+                        placeholder="Edit your message"
+                    ></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <button class="btn-primary modal-save">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import Sample Data Modal -->
+    <div id="import-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="import-title" style="display: none;">
+        <div class="modal-backdrop" aria-hidden="true"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 id="import-title">Import Sample Data</h2>
+                <button class="modal-close" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Import sample conversations to explore the app's features?</p>
+                <p class="text-muted">This will add demo conversations to your existing data.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <button class="btn-primary modal-save">Import</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container" role="alert" aria-live="polite"></div>
+    
+    <!-- Scripts -->
+    <script src="utils.js"></script>
+    <script src="store.js"></script>
+    <script src="generator.js"></script>
+    <script src="ui.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
