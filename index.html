@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A modern AI assistant interface with conversation management">
-    <title>Claude-like Assistant</title>
+    <title>Claude Assistant</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,6 +12,26 @@
         <!-- Sidebar -->
         <aside class="sidebar" role="navigation" aria-label="Conversation list">
             <div class="sidebar-header">
+                <div class="sidebar-brand" aria-label="Claude assistant branding">
+                    <div class="brand-mark" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" role="img" aria-label="Claude logo">
+                            <circle cx="32" cy="32" r="14" fill="#f7c948"/>
+                            <circle cx="32" cy="32" r="7" fill="#3d2b1f"/>
+                            <circle cx="32" cy="10" r="5.5" fill="#f8d667"/>
+                            <circle cx="32" cy="54" r="5.5" fill="#f8d667"/>
+                            <circle cx="10" cy="32" r="5.5" fill="#f6c94d"/>
+                            <circle cx="54" cy="32" r="5.5" fill="#f6c94d"/>
+                            <circle cx="17" cy="17" r="5" fill="#f4be3b"/>
+                            <circle cx="47" cy="17" r="5" fill="#f4be3b"/>
+                            <circle cx="17" cy="47" r="5" fill="#f4be3b"/>
+                            <circle cx="47" cy="47" r="5" fill="#f4be3b"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2>Claude</h2>
+                        <p>AI assistant</p>
+                    </div>
+                </div>
                 <button 
                     id="new-conversation-btn" 
                     class="btn-new-conversation"
@@ -64,10 +84,28 @@
                 </button>
                 
                 <div class="assistant-info">
-                    <h1 id="assistant-name" class="assistant-name">Claude</h1>
-                    <div class="status-indicator">
-                        <span class="status-dot" aria-hidden="true"></span>
-                        <span id="assistant-status" class="status-text">Online</span>
+                    <div class="assistant-title-wrap">
+                        <div class="assistant-badge" aria-hidden="true">
+                            <svg viewBox="0 0 48 48">
+                                <circle cx="24" cy="24" r="12" fill="#f7c948"/>
+                                <circle cx="24" cy="24" r="6" fill="#3d2b1f"/>
+                                <circle cx="24" cy="8" r="4" fill="#f8d667"/>
+                                <circle cx="24" cy="40" r="4" fill="#f8d667"/>
+                                <circle cx="8" cy="24" r="4" fill="#f6c94d"/>
+                                <circle cx="40" cy="24" r="4" fill="#f6c94d"/>
+                                <circle cx="13" cy="13" r="3.5" fill="#f4be3b"/>
+                                <circle cx="35" cy="13" r="3.5" fill="#f4be3b"/>
+                                <circle cx="13" cy="35" r="3.5" fill="#f4be3b"/>
+                                <circle cx="35" cy="35" r="3.5" fill="#f4be3b"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 id="assistant-name" class="assistant-name">Claude</h1>
+                            <div class="status-indicator">
+                                <span class="status-dot" aria-hidden="true"></span>
+                                <span id="assistant-status" class="status-text">Online</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
