@@ -359,7 +359,7 @@ function createMessageElement(message, conversationId) {
     `;
     
     // Edit button
-    // Copy button
+   // Copy-to-clipboard feature 
     div.querySelector('.copy').addEventListener('click', () => {
         navigator.clipboard.writeText(message.content).then(() => {
             showToast('Message copied', 'success');
